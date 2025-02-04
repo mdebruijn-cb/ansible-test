@@ -1,0 +1,10 @@
+- name: Hello World Sample
+  hosts: all
+  tasks:
+    - name: Pause for 1 minute
+      ansible.builtin.pause:
+        minutes: 1
+
+    - name: Hello Message
+      ansible.builtin.debug:
+        msg: "Hello World!"
