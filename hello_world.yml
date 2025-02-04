@@ -3,7 +3,7 @@
   tasks:
     - name: Pause for 1 minute
       ansible.builtin.pause:
-        minutes: 1
+        seconds: 30
 
     - name: Hello Message
       ansible.builtin.debug:
