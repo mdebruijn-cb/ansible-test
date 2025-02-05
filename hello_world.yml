@@ -7,29 +7,6 @@
         update_cache: yes
         upgrade: yes
 
-    - name: Check for held packages
-      ansible.builtin.command: dpkg --get-selections | grep hold
-      register: held_packages
-      changed_when: false
-      ignore_errors: yes
-
-    - name: Unhold held packages (if any)
-      ansible.builtin.command: apt-mark unhold {{ item }}
-      with_items: "{{ held_packages.stdout_lines | default([]) | map('split', '\t') | map('first') }}"
-      when: held_packages.stdout_lines is defined and held_packages.stdout_lines | length > 0
-      ignore_errors: yes
-
-    - name: Fix broken packages
-      ansible.builtin.command: apt --fix-broken install -y
-      register: fix_broken_result
-      changed_when: "'0 upgraded, 0 newly installed' not in fix_broken_result.stdout"
-      ignore_errors: yes
-
-    - name: Reconfigure any broken packages
-      ansible.builtin.command: dpkg --configure -a
-      changed_when: false
-      ignore_errors: yes
-
     - name: Ensure required repositories are enabled (universe, multiverse)
       ansible.builtin.command: add-apt-repository -y {{ item }}
       with_items:
@@ -42,21 +19,6 @@
     - name: Refresh package lists after repository changes
       ansible.builtin.apt:
         update_cache: yes
-
-    - name: Manually install missing dependencies
-      ansible.builtin.apt:
-        name:
-          - grub-efi-amd64-signed
-          - grub2-common
-        state: present
-      ignore_errors: yes
-
-    - name: Remove problematic package (shim-signed) if necessary
-      ansible.builtin.apt:
-        name: shim-signed
-        state: absent
-      when: "'shim-signed' in fix_broken_result.stdout"
-      ignore_errors: yes
 
     - name: Install required packages
       ansible.builtin.apt:
