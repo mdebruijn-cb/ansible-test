@@ -1,8 +1,7 @@
 - name: Fix Package Issues and Install Packages
   hosts: all
-  become: yes  # Use privilege escalation (sudo)
+  become: yes # Use privilege escalation (sudo)
   tasks:
-
     - name: Ensure package cache is updated
       ansible.builtin.apt:
         update_cache: yes
@@ -66,3 +65,11 @@
           - nginx
           - python3
         state: present
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - nginx
+          - python3
+        state: absent
