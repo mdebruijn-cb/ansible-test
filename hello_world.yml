@@ -25,7 +25,6 @@
         name:
           - docker.io
           - nginx
-          - python3
         state: present
 
     - name: Install required packages
@@ -33,5 +32,4 @@
         name:
           - docker.io
           - nginx
-          - python3
         state: absent
