@@ -1,10 +1,25 @@
-- name: Hello World Sample
+- name: Install and then remove packages
   hosts: all
+  become: yes
   tasks:
-    - name: Pause for 1 minute
-      ansible.builtin.pause:
-        seconds: 30
+    - name: Install packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - nginx
+          - python3
+        state: present
+        update_cache: yes
 
-    - name: Hello Message
-      ansible.builtin.debug:
-        msg: "Hello World!"
+    - name: Purge the packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - nginx
+          - python3
+        state: absent
+        purge: yes  # Removes config files too
+
+    - name: Autoremove unnecessary dependencies
+      ansible.builtin.apt:
+        autoremove: yes
